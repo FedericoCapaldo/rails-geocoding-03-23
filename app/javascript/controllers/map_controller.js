@@ -10,6 +10,7 @@ export default class extends Controller {
   connect() {
     this.#loadMap();
     this.#addMarkersToMap();
+    this.#fitMapToMarkers();
   }
 
   #loadMap() {
@@ -22,11 +23,16 @@ export default class extends Controller {
   }
 
   #addMarkersToMap() {
-    console.log(this.markersValue);
     this.markersValue.forEach((marker) => {
       new mapboxgl.Marker()
         .setLngLat([marker.lon, marker.lat])
         .addTo(this.map)
     })
+  }
+
+  #fitMapToMarkers() {
+    const bounds = new mapboxgl.LngLatBounds();
+    this.markersValue.forEach((marker) => bounds.extend([marker.lon, marker.lat]));
+    this.map.fitBounds(bounds, { padding: 70, maxZoom: 15, duration: 0 });
   }
 }
